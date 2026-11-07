@@ -1,0 +1,9 @@
+# Backend build artifacts
+__pycache__/
+*.pyc
+*.db
+cpshop.db
+*.sqlite
+*.log
+.venv/
+.DS_Store
