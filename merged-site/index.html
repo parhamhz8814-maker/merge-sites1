@@ -304,6 +304,7 @@
     border-radius:var(--radius-sm);overflow:hidden;background:#0F0F0F;
   }
  .game-video-inline video{width:100%;height:100%;object-fit:cover;display:block}
+ .game-preview-img{width:100%;height:100%;object-fit:contain;display:block;background:#0F0F0F}
  .game-video-inline video.no-video{display:none}
  .game-from{color:#fff;font-size:1rem;font-weight:900;margin-top:2px}
  /* the side rail is superseded by the in-panel preview */
@@ -1454,23 +1455,6 @@ footer{
       <div class="game-drawer-main">
         <div id="game-panels"></div>
       </div>
-      <div class="game-video-rail">
-        <div class="game-video-wrap" id="game-video-wrap">
-          <img class="game-video-poster" id="game-video-poster" alt="" aria-hidden="true" />
-          <div class="game-video-placeholder" aria-hidden="true">ویدیو به‌زودی</div>
-          <video
-            class="game-video"
-            id="game-video"
-            controls
-            autoplay
-            preload="metadata"
-            muted
-            playsinline
-            oncanplay="onGameVideoCanPlay(this)"
-            onerror="onGameVideoError(this)"
-          ></video>
-        </div>
-      </div>
     </div>
   </aside>
 </div>
@@ -1831,11 +1815,9 @@ function renderGameDrawer(){
     return `<section class="game-panel" id="game-panel-${key}" role="tabpanel" aria-labelledby="game-tab-${key}" ${i ? 'hidden' : ''} tabindex="0">
       <div class="game-body">
         <div class="game-video-inline">
-          <video class="game-inline-video" id="gvid-${key}" poster="assets/posters/${key}.jpg"
-                 muted playsinline loop controls preload="none"
-                 onerror="this.classList.add('no-video')">
-            <source src="assets/videos/${key}.mp4" type="video/mp4">
-          </video>
+          <img class="game-preview-img" src="assets/posters/${key}.jpg"
+               alt="پیشنمایش ${esc(detail.title)}" loading="lazy"
+               onerror="this.style.display='none'">
         </div>
         <div class="game-kicker">${esc(detail.kicker)}</div>
         <h3>${esc(detail.title)}</h3>
@@ -1918,16 +1900,6 @@ function selectGameTab(key, moveFocus){
   gamePanels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
     panel.hidden = panel.id !== `game-panel-${key}`;
   });
-  /* Play only the visible panel's preview; pause the rest. */
-  gamePanels.querySelectorAll('video').forEach(v => {
-    if (v.id !== `gvid-${key}`) { try { v.pause(); } catch(e){} }
-  });
-  const inline = gamePanels.querySelector(`#gvid-${key}`);
-  if (inline){
-    inline.muted = true;
-    const pl = inline.play();
-    if (pl && pl.catch) pl.catch(() => {});
-  }
   updateGameVideo(key);
   if (moveFocus && gameTabs) gameTabs.querySelector(`[data-game-tab="${key}"]`)?.focus();
 }
