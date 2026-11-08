@@ -36,7 +36,9 @@ from starlette.responses import FileResponse, JSONResponse
 from starlette.routing import Mount, Route
 
 HERE = Path(__file__).resolve().parent
-SITE_ROOT = HERE.parent          # gametop/ — index.html, logos.html, assets
+# Prefer the deployable build (dist/) so `GET /` serves the real storefront on the
+# same origin as /api; fall back to the parent folder for older layouts.
+SITE_ROOT = (HERE.parent / "dist") if (HERE.parent / "dist" / "index.html").exists() else HERE.parent
 
 # Import the FastMCP app (tools defined there; do not run its __main__).
 from cpshop_mcp import mcp  # noqa: E402
