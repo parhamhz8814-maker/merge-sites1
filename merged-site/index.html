@@ -364,6 +364,16 @@
   .game-price-list{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:2px}
   .game-price{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-card);font-size:.8rem;cursor:pointer;transition:border-color .15s ease,background .15s ease}
   .game-price:hover{border-color:#8A8A8A;background:#1F1F1F}
+  /* Item cards — selectable, preview-style */
+  .game-price{min-height:74px}
+  .game-price .gp-thumb{width:52px;height:52px;border-radius:6px;object-fit:cover;flex:0 0 auto}
+  .game-price .gp-info{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;text-align:right}
+  .game-price .gp-name{font-size:.82rem;color:#EDEDED;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .game-price strong{font-size:.9rem;color:#fff;font-weight:900}
+  .game-price strong del{display:block;font-size:.72rem;color:#8A8A8A;font-weight:400}
+  .game-price.selected{border-color:#F0F0F0;background:#1C1C1C;box-shadow:inset 0 0 0 1px #F0F0F0}
+  .game-pick{margin-top:8px;font-size:.8rem;color:#B8B8B8}
+  .game-pick b{color:#fff}
   /* Game card (one per app) */
   .game-card{cursor:pointer}
   .game-card:focus-visible{outline:2px solid #8A8A8A;outline-offset:2px}
@@ -1830,11 +1840,15 @@ function renderGameDrawer(){
         <div class="game-kicker">${esc(detail.kicker)}</div>
         <h3>${esc(detail.title)}</h3>
         <div class="game-from">از ${fmtToman(Math.min(...products.map(p => p.price)))} تومان</div>
+        <div class="game-pick" id="pick-${key}">انتخاب شما: <b>${esc(products[0].title)}</b></div>
       </div>
       <div class="game-price-list" aria-label="قیمت محصولات ${esc(detail.title)}">
-        ${products.map(product => `<div class="game-price">
-          <span>${esc(product.title)}</span>
-          <strong>${product.old ? `<del>${fmtToman(product.old)} تومان</del>` : ''}${fmtToman(product.price)} تومان</strong>
+        ${products.map((product, pi) => `<div class="game-price${pi === 0 ? ' selected' : ''}" data-pick="${esc(product.id)}">
+          <img class="gp-thumb" src="assets/posters/${key}.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+          <div class="gp-info">
+            <span class="gp-name">${esc(product.title)}</span>
+            <strong>${product.old ? `<del>${fmtToman(product.old)} تومان</del>` : ''}${fmtToman(product.price)} تومان</strong>
+          </div>
           <button class="game-buy" type="button" data-add="${product.id}" aria-label="افزودن ${esc(product.title)} ${esc(detail.title)} به سبد خرید">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             افزودن
@@ -2074,14 +2088,30 @@ modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 $('#modal-close').addEventListener('click', closeModal);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
+/* Mark one item card as the chosen item and mirror it into the panel caption. */
+function selectPriceRow(row){
+  const panel = row.closest('.game-panel');
+  if (!panel) return;
+  panel.querySelectorAll('.game-price').forEach(r => r.classList.toggle('selected', r === row));
+  const pick = panel.querySelector('.game-pick');
+  const name = row.querySelector('.gp-name');
+  if (pick && name) pick.innerHTML = 'انتخاب شما: <b>' + name.textContent + '</b>';
+}
+
 document.addEventListener('click', e => {
   const add = e.target.closest('[data-add]');
-  if (add){ addToCart(add.dataset.add); return; }
+  if (add){
+    const row = add.closest('.game-price');
+    if (row) selectPriceRow(row);
+    addToCart(add.dataset.add);
+    return;
+  }
   const act = e.target.closest('[data-act]');
   if (act){ handleCartAction(act.dataset.act, act.dataset.id); return; }
-  /* Whole price row is a buy target — clicking anywhere on it adds to cart. */
+  /* Whole price row is a buy target — clicking anywhere on it picks + adds. */
   const row = e.target.closest('.game-price');
   if (row){
+    selectPriceRow(row);
     const btn = row.querySelector('.game-buy');
     if (btn) btn.click();
   }
