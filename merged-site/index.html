@@ -215,6 +215,11 @@
   /* Official game logo layer (hotlinked from Wikipedia) with SVG art fallback beneath */
   .card-media img.game-logo,.thumb img.game-logo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:16px 20px;transition:transform 400ms ease;z-index:1}
   .thumb img.game-logo{padding:6px 10px}
+  /* Thumbnails must never overflow their box (cart rows were covered by a
+     hotlinked logo rendering at its intrinsic size). */
+  .thumb{position:relative;overflow:hidden}
+  .thumb img.poster-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .thumb img.game-logo{position:absolute;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;padding:4px}
   .card:hover .card-media img.game-logo{transform:scale(1.08)}
   .card-media img.game-logo.is-fallback,.thumb img.game-logo.is-fallback{display:none}
   .card-badge{
@@ -274,7 +279,9 @@
   .game-video-wrap.has-poster .game-video-placeholder{display:none}
   @media (max-width:820px){
     .game-drawer-body{flex-direction:column}
-    .game-video-rail{flex:0 0 auto;order:-1;width:100%;border-left:0;border-bottom:1px solid var(--color-border)}
+    .game-video-rail{flex:0 0 auto;order:-1;width:100%;border-left:0;border-bottom:1px solid var(--color-border);padding:12px}
+    /* compact preview strip — the poster is a thumbnail, not a full panel */
+    .game-video-wrap{aspect-ratio:16/9;max-height:180px}
   }
   .game-drawer-overlay.open .game-drawer{transform:translateX(0)}
   .game-drawer-head{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--color-border);background:rgba(30,28,53,.92);position:sticky;top:0;z-index:2}
@@ -1615,6 +1622,12 @@ const artHTML = p => {
   return `${svgArt}<img class="game-logo" src="${logo}" alt="${esc(p.game)} لوگو" loading="lazy" referrerpolicy="no-referrer">`;
 };
 
+/* Local poster thumbnails for cart/receipt rows — no hotlinked logos in small
+   boxes (they rendered at intrinsic size and covered the row). */
+const thumbHTML = p => p
+  ? artSVG(p) + `<img class="poster-thumb" src="assets/posters/${esc(p.gameKey)}.jpg" alt="${esc(p.game || '')}" loading="lazy" onerror="this.style.display='none'">`
+  : '';
+
 const GAME_DETAILS = {"premium": {"title": "پریمیوم و اشتراک", "kicker": "تحویل آنی و امن", "text": "خرید پریمیوم و اشتراک با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "codm": {"title": "کالاف دیوتی موبایل", "kicker": "تحویل آنی و امن", "text": "خرید کالاف دیوتی موبایل با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "freefire": {"title": "فری فایر", "kicker": "تحویل آنی و امن", "text": "خرید فری فایر با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "pubg": {"title": "پابجی موبایل", "kicker": "تحویل آنی و امن", "text": "خرید پابجی موبایل با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "football": {"title": "فوتبال استریک", "kicker": "تحویل آنی و امن", "text": "خرید فوتبال استریک با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "plato": {"title": "پلاتو", "kicker": "تحویل آنی و امن", "text": "خرید پلاتو با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "soccerstars": {"title": "ساکر استارز", "kicker": "تحویل آنی و امن", "text": "خرید ساکر استارز با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "eightball": {"title": "بیلیارد", "kicker": "تحویل آنی و امن", "text": "خرید بیلیارد با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-adidas": {"title": "گیفت کارت آدیداس", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت آدیداس با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-amazon": {"title": "گیفت کارت آمازون", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت آمازون با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-steam": {"title": "گیفت کارت استیم", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت استیم با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-skype": {"title": "گیفت کارت اسکایپ", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت اسکایپ با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-xbox": {"title": "گیفت کارت ایکس‌باکس", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت ایکس‌باکس با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-psn": {"title": "گیفت کارت پلی استیشن", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت پلی استیشن با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-roblox": {"title": "گیفت کارت روبلاکس", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت روبلاکس با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-razer": {"title": "گیفت کارت ریزر گلد", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت ریزر گلد با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-freefire": {"title": "گیفت کارت فری فایر", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت فری فایر با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-nike": {"title": "گیفت کارت نایک", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت نایک با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-netflix": {"title": "گیفت کارت نتفلیکس", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت نتفلیکس با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "gift-nintendo": {"title": "گیفت کارت نینتندو", "kicker": "تحویل آنی و امن", "text": "خرید گیفت کارت نینتندو با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "clashmini": {"title": "کلش مینی", "kicker": "تحویل آنی و امن", "text": "خرید کلش مینی با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "brawlstars": {"title": "براول استارز", "kicker": "تحویل آنی و امن", "text": "خرید براول استارز با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "clash": {"title": "کلش آف کلنز", "kicker": "تحویل آنی و امن", "text": "خرید کلش آف کلنز با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}, "clashroyale": {"title": "کلش رویال", "kicker": "تحویل آنی و امن", "text": "خرید کلش رویال با تحویل آنی. فقط آیدی بازیکن یا اطلاعات لازم را وارد کنید؛ بدون نیاز به رمز اکانت.", "tips": ["تحویل آنی پس از پرداخت", "بدون نیاز به رمز اکانت", "پشتیبانی در تمام روزهای هفته"]}};
 
 /* One delegated listener owns the fallback policy: any official logo that fails
@@ -2060,7 +2073,7 @@ function renderCartView(){
         if (!p) return '';
         return `
         <div class="cart-item">
-          <div class="thumb">${artHTML(p)}</div>
+          <div class="thumb">${thumbHTML(p)}</div>
           <div class="ci-info"><b>${esc(p.title)}</b><span>${esc(p.game)}</span></div>
           <div class="ci-price">${fmtToman(p.price * ci.qty)}</div>
           <div class="qty">
@@ -2264,7 +2277,7 @@ function showSuccess(track, totalPaid, playerIds){
       <div class="cart-items" style="text-align:right;margin-top:14px">
         ${checkoutGroups.map(g => `
         <div class="cart-item">
-          <div class="thumb">${artHTML(g.items[0].p)}</div>
+          <div class="thumb">${thumbHTML(g.items[0].p)}</div>
           <div class="ci-info"><b>${esc(g.game)}</b><span>${g.items.map(it => `${esc(it.p.title)} ×${toFa(it.qty)}`).join('، ')}</span></div>
           <div class="ci-price" dir="ltr">${esc(playerIds[g.game] || '')}</div>
         </div>`).join('')}
