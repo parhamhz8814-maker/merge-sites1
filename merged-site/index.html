@@ -297,12 +297,12 @@
   .game-tab[aria-selected="true"] .game-tab-icon{color:#fff}
   .game-panel{padding:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
   .game-panel > .game-body{grid-area:auto}
- /* In-panel game preview — portrait 4:5 like the promo cards */
- .game-video-inline{
-   position:relative;width:100%;max-width:300px;aspect-ratio:4/5;
-   margin:0 auto 12px;border:1px solid var(--color-border);
-   border-radius:var(--radius-sm);overflow:hidden;background:#0F0F0F;
- }
+  /* In-panel game preview — source clips are 1280x800, so use 16:10 full width */
+  .game-video-inline{
+    position:relative;width:100%;max-width:none;aspect-ratio:16/10;
+    margin:0 0 14px;border:1px solid var(--color-border);
+    border-radius:var(--radius-sm);overflow:hidden;background:#0F0F0F;
+  }
  .game-video-inline video{width:100%;height:100%;object-fit:cover;display:block}
  .game-video-inline video.no-video{display:none}
  .game-from{color:#fff;font-size:1rem;font-weight:900;margin-top:2px}
