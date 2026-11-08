@@ -297,6 +297,18 @@
   .game-tab[aria-selected="true"] .game-tab-icon{color:#fff}
   .game-panel{padding:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
   .game-panel > .game-body{grid-area:auto}
+ /* In-panel game preview — portrait 4:5 like the promo cards */
+ .game-video-inline{
+   position:relative;width:100%;max-width:300px;aspect-ratio:4/5;
+   margin:0 auto 12px;border:1px solid var(--color-border);
+   border-radius:var(--radius-sm);overflow:hidden;background:#0F0F0F;
+ }
+ .game-video-inline video{width:100%;height:100%;object-fit:cover;display:block}
+ .game-video-inline video.no-video{display:none}
+ .game-from{color:#fff;font-size:1rem;font-weight:900;margin-top:2px}
+ /* the side rail is superseded by the in-panel preview */
+ .game-video-rail{display:none !important}
+ .game-panel .game-body{text-align:center}
   .game-panel > .game-price-list{grid-area:auto}
   .game-panel > .game-products{grid-area:auto}
   .game-panel[hidden]{display:none}
@@ -1808,10 +1820,16 @@ function renderGameDrawer(){
     const products = PRODUCTS.filter(p => p.gameKey === key);
     return `<section class="game-panel" id="game-panel-${key}" role="tabpanel" aria-labelledby="game-tab-${key}" ${i ? 'hidden' : ''} tabindex="0">
       <div class="game-body">
+        <div class="game-video-inline">
+          <video class="game-inline-video" id="gvid-${key}" poster="assets/posters/${key}.jpg"
+                 muted playsinline loop controls preload="none"
+                 onerror="this.classList.add('no-video')">
+            <source src="assets/videos/${key}.mp4" type="video/mp4">
+          </video>
+        </div>
         <div class="game-kicker">${esc(detail.kicker)}</div>
         <h3>${esc(detail.title)}</h3>
-        <p>${esc(detail.text)}</p>
-        <ul>${detail.tips.map(tip => `<li>${esc(tip)}</li>`).join('')}</ul>
+        <div class="game-from">از ${fmtToman(Math.min(...products.map(p => p.price)))} تومان</div>
       </div>
       <div class="game-price-list" aria-label="قیمت محصولات ${esc(detail.title)}">
         ${products.map(product => `<div class="game-price">
@@ -1886,6 +1904,16 @@ function selectGameTab(key, moveFocus){
   gamePanels.querySelectorAll('[role="tabpanel"]').forEach(panel => {
     panel.hidden = panel.id !== `game-panel-${key}`;
   });
+  /* Play only the visible panel's preview; pause the rest. */
+  gamePanels.querySelectorAll('video').forEach(v => {
+    if (v.id !== `gvid-${key}`) { try { v.pause(); } catch(e){} }
+  });
+  const inline = gamePanels.querySelector(`#gvid-${key}`);
+  if (inline){
+    inline.muted = true;
+    const pl = inline.play();
+    if (pl && pl.catch) pl.catch(() => {});
+  }
   updateGameVideo(key);
   if (moveFocus && gameTabs) gameTabs.querySelector(`[data-game-tab="${key}"]`)?.focus();
 }
