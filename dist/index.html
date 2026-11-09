@@ -1462,18 +1462,10 @@ footer{
       </div>
       <div class="game-video-rail">
         <div class="game-video-wrap" id="game-video-wrap">
-          <img class="game-video-poster" id="game-video-poster" alt="" aria-hidden="true" />
-          <video
-            class="game-video"
-            id="game-video"
-            controls
-            autoplay
-            muted
-            playsinline
-            preload="metadata"
-            oncanplay="onGameVideoCanPlay(this)"
-            onerror="onGameVideoError(this)"
-          ></video>
+                <img class="game-video-poster" id="game-video-poster" src="assets/posters/codm.jpg" alt="پیش‌نمایش بازی Codm"/>
+                <div class="game-video-placeholder" aria-hidden="true">پیش‌نمایش بازی</div>
+            </div>
+          <img class="game-video-poster" id="game-video-poster" alt="" />
           <div class="game-video-placeholder" aria-hidden="true">پیش‌نمایش بازی</div>
         </div>
       </div>
@@ -1848,10 +1840,7 @@ function renderGameDrawer(){
             <span class="gp-name">${esc(product.title)}</span>
             <strong>${product.old ? `<del>${fmtToman(product.old)} تومان</del>` : ''}${fmtToman(product.price)} تومان</strong>
           </div>
-          <button class="game-buy" type="button" data-add="${product.id}" aria-label="افزودن ${esc(product.title)} ${esc(detail.title)} به سبد خرید">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            افزودن
-          </button>
+          <button class="game-buy" type="button" data-add="${product.id}" aria-label="افزودن ${esc(product.title)} ${esc(detail.title)} به سبد خرید" hidden></button>
         </div>`).join('')}
       </div>
       <div class="game-products"><strong>${toFa(products.length)} محصول</strong> برای این بازی در فروشگاه موجود است.</div>
@@ -1873,32 +1862,17 @@ function onGameVideoError(videoEl){
 }
 
 /* Single video preview in the drawer's left rail — swaps per selected game. */
+/* The left preview is a still that reads as a video — no <video> element. */
 function updateGameVideo(key){
-  const v = $('#game-video');
   const wrap = $('#game-video-wrap');
-  if (!v || !wrap) return;
-  const src = `assets/videos/${key}.mp4`;
+  const pImg = $('#game-video-poster');
+  if (!wrap || !pImg) return;
   const poster = `assets/posters/${key}.jpg`;
   wrap.classList.remove('has-video');
-  v.removeAttribute('poster');
-  v.poster = poster;
-  while (v.firstChild) v.removeChild(v.firstChild);
-  /* Show the game poster in the panel until the clip actually plays */
-  const pImg = $('#game-video-poster');
-  if (pImg){
-    pImg.onload = () => wrap.classList.add('has-poster');
-    pImg.onerror = () => { wrap.classList.remove('has-poster'); pImg.style.display = 'none'; };
-    pImg.style.display = 'block';
-    pImg.src = poster;
-  }
-  const source = document.createElement('source');
-  source.src = src;
-  source.type = 'video/mp4';
-  v.appendChild(source);
-  v.load();
-  v.muted = true;
-  const p = v.play();
-  if (p && p.catch) p.catch(() => {});
+  pImg.onload = () => wrap.classList.add('has-poster');
+  pImg.onerror = () => { wrap.classList.remove('has-poster'); pImg.style.display = 'none'; };
+  pImg.style.display = 'block';
+  pImg.src = poster;
 }
 
 function pauseAllGameVideos(){

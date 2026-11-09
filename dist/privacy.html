@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"" />
+  <title>حریم خصوصی | سی‌پی شاپ</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap');
+  </style>
+
+  <style>
+/* ===== DARK MONOCHROME THEME — final override (wins cascade) ===== */
+:root{
+  --color-primary:#FFFFFF; --color-on-primary:#000000;
+  --color-secondary:#B8B8B8; --color-on-secondary:#000000;
+  --color-accent:#FFFFFF; --color-on-accent:#000000;
+  --color-background:#0A0A0A; --color-foreground:#F0F0F0;
+  --color-card:#1A1A1A; --color-card-foreground:#F0F0F0;
+  --color-muted:#1F1F1F; --color-muted-foreground:#9A9A9A;
+  --color-border:#333333; --color-destructive:#FF5A5A;
+  --color-ring:#8A8A8A;
+  --radius:6px; --radius-sm:4px;
+  --shadow:none; --shadow-lg:none;
+}
+html,body{
+  background:#0A0A0A !important;
+  color:#F0F0F0 !important;
+}
+body{ background-image:none !important; }
+
+/* Announce bar */
+.announce{
+  background:#000 !important;
+  color:#F0F0F0 !important;
+  border-bottom:1px solid #333 !important;
+}
+
+/* Header / nav */
+header{
+  background:rgba(10,10,10,.94) !important;
+  border-bottom:1px solid #333 !important;
+  backdrop-filter:none !important;
+}
+.logo, .logo .highlight{ color:#F0F0F0 !important; }
+nav a{ color:#9A9A9A !important; }
+nav a:hover{ color:#FFF !important; }
+
+/* Hero */
+.hero, .hero-inner{ background:transparent !important; }
+.hero::before{ background:none !important; }
+.hero h1, .hero-stat b{ color:#F0F0F0 !important; }
+.hero h1 .grad{ color:#FFF !important; }
+.hero p, .hero-stat span{ color:#9A9A9A !important; }
+.hero-badge{
+  background:#161616 !important;
+  border:1px solid #444 !important;
+  color:#DDD !important;
+}
+
+/* Buttons */
+.btn-primary, .btn-accent, .add-btn, .card-buy{
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+  border:1px solid #F0F0F0 !important;
+  box-shadow:none !important;
+}
+.btn-primary:hover, .btn-accent:hover, .add-btn:hover{
+  background:#FFF !important;
+  color:#000 !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+.btn-ghost{
+  background:#161616 !important;
+  color:#F0F0F0 !important;
+  border:1px solid #444 !important;
+}
+.btn-ghost:hover{ background:#242424 !important; }
+
+/* Toolbar / search / chips */
+.search-box input{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#F0F0F0 !important;
+  box-shadow:none !important;
+}
+.search-box input:focus{
+  border-color:#888 !important;
+  box-shadow:none !important;
+}
+.search-box input::placeholder{ color:#777 !important; }
+.search-box svg{ color:#9A9A9A !important; }
+.chip{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#9A9A9A !important;
+}
+.chip:hover{ border-color:#888 !important; color:#FFF !important; }
+.chip.active{
+  background:#F0F0F0 !important;
+  border-color:#F0F0F0 !important;
+  color:#0A0A0A !important;
+}
+
+/* Trust strip */
+.trust-item{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.trust-item svg{ color:#DDD !important; }
+.trust-item b{ color:#F0F0F0 !important; }
+.trust-item span{ color:#9A9A9A !important; }
+
+/* Sections */
+.section-title{ color:#F0F0F0 !important; }
+.section-title svg{ color:#DDD !important; }
+.section-sub{ color:#9A9A9A !important; }
+
+/* Cards */
+.card{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.card:hover{
+  border-color:#777 !important;
+  box-shadow:none !important;
+  transform:translateY(-3px) !important;
+}
+.card-media{ background:#1F1F1F !important; border-bottom:1px solid #333 !important; }
+.card-title, .card-title a{ color:#F0F0F0 !important; }
+.card-cat{ color:#B8B8B8 !important; }
+.card-badge{
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+.card-badge.hot, .card-badge.new{
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+}
+.price .now{ color:#FFF !important; }
+.price .old, .price .now small{ color:#8A8A8A !important; }
+
+/* Game drawer */
+.game-drawer{
+  background:#0F0F0F !important;
+  border-inline-start:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.game-drawer-head{
+  background:#141414 !important;
+  border-bottom:1px solid #333 !important;
+}
+.game-drawer-head h2{ color:#F0F0F0 !important; }
+.game-drawer-close{
+  background:#1F1F1F !important;
+  border:1px solid #333 !important;
+  color:#F0F0F0 !important;
+}
+.game-tab{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#9A9A9A !important;
+  border-radius:6px !important;
+}
+.game-tab:hover{ border-color:#888 !important; color:#FFF !important; }
+.game-tab[aria-selected="true"]{
+  background:#F0F0F0 !important;
+  border-color:#F0F0F0 !important;
+  color:#0A0A0A !important;
+}
+.game-tab-icon{ color:#B8B8B8 !important; }
+.game-panel .game-kicker{ color:#B8B8B8 !important; }
+.game-panel p, .game-panel li{ color:#B8B8B8 !important; }
+.game-motion{
+  background:#1A1A1A !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.game-price{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+}
+
+/* Cart / checkout */
+.cart-drawer, .cart-panel{ background:#0F0F0F !important; }
+.cart-total{
+  background:#1A1A1A !important;
+  border:1px solid #444 !important;
+}
+.cart-total span, .cart-total b{ color:#F0F0F0 !important; }
+.cart-empty{ color:#8A8A8A !important; }
+.qty button{
+  background:#1F1F1F !important;
+  border:1px solid #333 !important;
+  color:#F0F0F0 !important;
+}
+.qty button:hover{ background:#F0F0F0 !important; color:#000 !important; }
+.field label{ color:#DDD !important; }
+.field input, .field select{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#F0F0F0 !important;
+  box-shadow:none !important;
+}
+.field input:focus, .field select:focus{
+  border-color:#888 !important;
+  box-shadow:none !important;
+}
+.pay-method label{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#DDD !important;
+}
+.pay-method input:checked + label{
+  background:#F0F0F0 !important;
+  border-color:#F0F0F0 !important;
+  color:#0A0A0A !important;
+}
+.pay-note{
+  background:#1A1A1A !important;
+  border:1px solid #444 !important;
+  color:#C9C9C9 !important;
+}
+
+/* Chat widget */
+.chat-fab{
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+  box-shadow:none !important;
+}
+.chat-fab:hover{ box-shadow:none !important; }
+.chat-panel{
+  background:#0F0F0F !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.chat-head{
+  background:#1A1A1A !important;
+  color:#F0F0F0 !important;
+  border-bottom:1px solid #333 !important;
+}
+.chat-head .cavatar{ background:#2A2A2A !important; color:#F0F0F0 !important; }
+.chat-chip{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#C9C9C9 !important;
+}
+.chat-chip:hover{ background:#242424 !important; color:#FFF !important; border-color:#888 !important; }
+.chat-input-row{
+  background:#141414 !important;
+  border-top:1px solid #333 !important;
+}
+.chat-input-row input{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  color:#F0F0F0 !important;
+  box-shadow:none !important;
+}
+.chat-input-row input:focus{ border-color:#888 !important; box-shadow:none !important; }
+.chat-input-row button{
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+}
+.chat-product{
+  background:#1A1A1A !important;
+  border:1px solid #333 !important;
+}
+.chat-product b{ color:#F0F0F0 !important; }
+.chat-product button{
+  background:#F0F0F0 !important;
+  border:1px solid #F0F0F0 !important;
+  color:#0A0A0A !important;
+  border-radius:4px !important;
+}
+
+/* Steps / FAQ */
+.step{ background:#161616 !important; border:1px solid #333 !important; box-shadow:none !important; }
+.step p{ color:#9A9A9A !important; }
+.faq-item{
+  background:#161616 !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.faq-q{ color:#F0F0F0 !important; }
+.faq-q svg{ color:#B8B8B8 !important; }
+.faq-a{ color:#B8B8B8 !important; }
+
+/* Footer */
+footer{
+  background:#0F0F0F !important;
+  border-top:1px solid #333 !important;
+}
+.footer-col h4{ color:#F0F0F0 !important; }
+.footer-col p, .footer-col a, .footer-bottom{
+  color:#9A9A9A !important;
+  border-color:#333 !important;
+}
+.footer-col a:hover{ color:#FFF !important; }
+
+/* Modal */
+.modal-overlay{ background:rgba(0,0,0,.82) !important; backdrop-filter:none !important; }
+.modal{
+  background:#141414 !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+.modal-head{ border-bottom:1px solid #333 !important; }
+.modal-head h3{ color:#F0F0F0 !important; }
+.modal-head h3 svg{ color:#B8B8B8 !important; }
+.modal-close{
+  background:#1F1F1F !important;
+  color:#F0F0F0 !important;
+}
+.modal-close:hover{ background:#2A2A2A !important; }
+
+/* Support agents */
+.agents, .agent-card{ background:#161616 !important; border:1px solid #333 !important; }
+.agent-card b{ color:#F0F0F0 !important; }
+.agent-card span{ color:#9A9A9A !important; }
+
+/* Generic fills */
+[style*="background:#B8B8B8"], [style*="background: #B8B8B8"]{
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+}
+::selection{ background:#F0F0F0; color:#0A0A0A; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:#0F0F0F; }
+::-webkit-scrollbar-thumb{ background:#333; border-radius:5px; }
+::-webkit-scrollbar-thumb:hover{ background:#555; }
+
+</style>
+
+  <style>
+    .wrap{max-width:980px;margin:0 auto;padding:28px 16px 60px;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+    .backlink{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid #444;color:var(--color-foreground);background:#161616;text-decoration:none;font-weight:800;}
+    .backlink:hover{border-color:#888;}
+    .card{background:#161616;border:1px solid #333;border-radius:var(--radius);padding:18px;box-shadow:none;}
+    h1{margin:6px 0 14px;font-size:1.8rem;color:#F0F0F0;}
+    h2{margin:18px 0 10px;font-size:1.1rem;color:#F0F0F0;}
+    p,li{color:#9A9A9A;line-height:1.9;}
+    ul{margin:6px 0 0 22px;}
+    .muted{color:#B8B8B8;}
+    .last-updated{margin-top:8px;color:#9A9A9A;font-size:.95rem;}
+    .section-note{background:#0F0F0F;border-top:1px solid #333;padding:12px 14px;margin-top:18px;border-radius:var(--radius-sm);}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="topbar">
+      <a class="backlink" href="index.html">بازگشت به فروشگاه</a>
+      <span class="muted" style="font-size:.92rem">سیاست حریم خصوصی</span>
+    </div>
+
+    <div class="card">
+      <h1>سیاست حریم خصوصی سی‌پی شاپ (CP.Shop)</h1>
+      <div class="last-updated">تاریخ آخرین به‌روزرسانی: <b>2026-11-05</b></div>
+
+      <h2>1) چه اطلاعاتی جمع‌آوری می‌کنیم؟</h2>
+      <p>برای انجام فرایند خرید و شارژ، ممکن است این داده‌ها را جمع‌آوری کنیم:</p>
+      <ul>
+        <li>نام و اطلاعات تماس: شماره تلفن و/یا تلگرام (در صورت نیاز برای هماهنگی سفارش).</li>
+        <li>اطلاعات اکانت بازی: شناسه بازی/Player ID یا اطلاعات مشابه که برای تحویل شارژ لازم است.</li>
+        <li>تاریخچه سفارش‌ها: آیتم‌های خریداری‌شده، تعداد، زمان ثبت سفارش و وضعیت انجام عملیات شارژ.</li>
+      </ul>
+
+      <h2>2) چرا جمع‌آوری می‌کنیم؟</h2>
+      <p>دلیل جمع‌آوری داده‌ها فقط موارد زیر است:</p>
+      <ul>
+        <li>انجام و تکمیل سفارش شارژ (تحویل به حساب بازی شما).</li>
+        <li>پشتیبانی: رسیدگی به خطاها، سوالات و پیگیری سفارش.</li>
+        <li>ارائه رسید/سوابق: برای شفافیت در روند پرداخت و تحویل.</li>
+      </ul>
+
+      <h2>3) اشتراک‌گذاری با اشخاص ثالث</h2>
+      <p>ما اطلاعات لازم را فقط در حدِ نیاز برای انجام سفارش با اشخاص ثالث به اشتراک می‌گذاریم:</p>
+      <ul>
+        <li>پردازنده پرداخت (Payment Processor) برای انجام تراکنش و دریافت وضعیت پرداخت.</li>
+        <li>ناشر/ارائه‌دهنده بازی (Game Publisher) برای تحویل شارژ (top-up) به اکانت بازی شما.</li>
+      </ul>
+      <p class="section-note">به‌طور کلی، اشتراک‌گذاری داده فقط برای تحقق هدف «انجام سفارش شارژ» انجام می‌شود.</p>
+
+      <h2>4) نگهداری داده‌ها (Retention period)</h2>
+      <p>مدت نگهداری داده‌ها با هدف جمع‌آوری هم‌راستا است:</p>
+      <ul>
+        <li>سوابق سفارش: تا زمان تکمیل فرایند، رسیدگی به موارد احتمالی و در صورت نیاز برای حل اختلاف/پیگیری.</li>
+        <li>اطلاعات تماس (در صورت دریافت): تا زمان رفع نیاز عملیاتی سفارش و پاسخ به درخواست‌های شما.</li>
+      </ul>
+
+      <h2>5) امنیت</h2>
+      <p>برای کاهش ریسک دسترسی غیرمجاز اقدامات زیر انجام می‌شود:</p>
+      <ul>
+        <li>استفاده از HTTPS در زمان بارگذاری سایت و انتقال داده‌ها (در صورت فعال بودن روی میزبان).</li>
+        <li>کنترل دسترسی به داده‌های سفارش/اطلاعات ارتباطی فقط برای فرایندهای ضروری پشتیبانی و عملیات سفارش.</li>
+        <li>اعتبارسنجی سمت سرور: ساخت سفارش روی سرور و اتکا به قیمت‌ها/محصولات موجود در دیتابیس، نه داده‌های ارسالی از مرورگر.</li>
+      </ul>
+
+      <h2>6) حقوق کاربر</h2>
+      <p>شما می‌توانید درخواست‌های زیر را ثبت کنید:</p>
+      <ul>
+        <li>دسترسی: مشاهده اطلاعاتی که درباره شما نگهداری می‌شود.</li>
+        <li>اصلاح: در صورت وجود اشتباه یا نواقص داده‌ها.</li>
+        <li>درخواست حذف یا محدودسازی پردازش: مطابق قوانین قابل اعمال و در چارچوبی که برای انجام تعهدات ضروری لازم است.</li>
+      </ul>
+
+      <h2>7) کوکی‌ها</h2>
+      <p>ممکن است از کوکی‌ها برای موارد زیر استفاده شود:</p>
+      <ul>
+        <li>بهبود تجربه کاربری و نگهداری تنظیمات/نشست‌ها.</li>
+        <li>اندازه‌گیری عملکرد در سطح محدود (در صورت فعال بودن تحلیل‌ها) برای بهبود کیفیت.</li>
+      </ul>
+      <p>می‌توانید کوکی‌ها را در مرورگر خود مدیریت یا غیرفعال کنید؛ در این حالت ممکن است برخی بخش‌ها با اختلال جزئی مواجه شوند.</p>
+
+      <h2>8) سن قانونی / افراد زیر سن</h2>
+      <p>این سرویس فقط برای افرادی قابل استفاده است که به سن قانونی رسیده‌اند. اگر زیر سن قانونی هستید، بدون رضایت ولی/قیم از خدمات استفاده نکنید.</p>
+      <p>در صورت اطلاع از استفاده افراد زیر سن، پردازش داده‌های مرتبط متوقف و با قوانین لازم هماهنگ می‌شود.</p>
+
+      <h2>9) تماس با ما</h2>
+      <p>برای سوالات مربوط به حریم خصوصی یا ثبت درخواست‌های حقوق کاربر، از ایمیل زیر استفاده کنید:</p>
+      <p><b><a href="mailto:support@cpshop.example">support@cpshop.example</a></b></p>
+
+      <h2>10) تاریخ آخرین به‌روزرسانی</h2>
+      <p>این صفحه در تاریخ <b>2026-11-05</b> به‌روزرسانی شده است. در صورت اعمال تغییرات مهم، نسخه‌های بعدی همین صفحه را منعکس می‌کنند.</p>
+    </div>
+  </main>
+</body>
+</html>
