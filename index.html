@@ -387,6 +387,16 @@
  
  .game-from{color:#fff;font-size:1rem;font-weight:900;margin-top:2px}
  .game-panel .game-body{text-align:center}
+  .game-poster{
+    display:block;
+    width:100%;
+    max-width:300px;
+    aspect-ratio:4/5;
+    object-fit:cover;
+    margin:0 auto 18px;
+    border:1px solid #3A3A3A;
+    background:#0B0B0B;
+  }
   .game-panel > .game-price-list{grid-area:auto}
   .game-panel > .game-products{grid-area:auto}
   .game-panel[hidden]{display:none}
@@ -1977,6 +1987,7 @@ function renderGameDrawer(){
     const products = PRODUCTS.filter(p => p.gameKey === key);
     return `<section class="game-panel" id="game-panel-${key}" role="tabpanel" aria-labelledby="game-tab-${key}" ${i ? 'hidden' : ''} tabindex="0">
       <div class="game-body">
+        <img class="game-poster" src="assets/posters/${key}.jpg" alt="${esc(detail.title)}" loading="lazy" decoding="async" onerror="this.style.display='none'">
         <div class="game-kicker">${esc(detail.kicker)}</div>
         <h3>${esc(detail.title)}</h3>
         <div class="game-from">از ${fmtToman(Math.min(...products.map(p => p.price)))} تومان</div>
