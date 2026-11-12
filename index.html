@@ -370,15 +370,7 @@
     padding:20px;
     max-width:900px;
   }
-  .game-panel::before{
-    content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
-    background-image:
-      linear-gradient(180deg, rgba(10,10,10,.62) 0%, rgba(10,10,10,.82) 55%, rgba(10,10,10,.92) 100%),
-      var(--game-bg,none);
-    background-size:cover,cover;background-position:center center,center center;
-    opacity:.9;
-    animation:mg-kenburns 18s ease-in-out infinite alternate;
-  }
+  /* solid panel — no background image */
   .game-panel::after{
     content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
     background:linear-gradient(105deg, transparent 38%, rgba(160,200,255,.16) 50%, transparent 62%);
@@ -2081,10 +2073,6 @@ function updateGameVideo(key){
   pImg.onerror = () => { wrap.classList.remove('has-poster'); pImg.style.display = 'none'; };
   pImg.style.display = 'block';
   pImg.src = poster;
-
-  /* panel backdrop = game poster (merged layout, video-like motion) */
-  const panelEl = document.querySelector(`#game-panel-${key}`);
-  if (panelEl) panelEl.style.setProperty('--game-bg', `url('assets/img/w720/${key}.webp')`);
 
   /* Clip slot: the left tab plays assets/videos/<key>.mp4 when it exists.
      No clip yet → the poster stays and no error is shown to the user. */
