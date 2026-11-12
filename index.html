@@ -1110,6 +1110,82 @@ nav a:hover{ color:#FFF !important; }
 }
 
 /* Cart / checkout */
+/* --- Card-to-card payment block (step 2) --- */
+.pay-block{
+  background:#141414 !important;
+  border:1px solid #3A3A3A !important;
+  padding:16px;
+  margin:4px 0 18px;
+}
+.pay-block-head{
+  font-weight:800;
+  font-size:.95rem;
+  color:#F0F0F0 !important;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.pay-block-head span{ font-weight:400; font-size:.8rem; color:#8A8A8A !important; }
+.pay-card-img{
+  display:block;
+  width:100%;
+  max-width:340px;
+  height:auto;
+  border:1px solid #3A3A3A;
+  background:#0B0B0B;
+  margin:0 auto 10px;
+  user-select:none;
+  -webkit-user-select:none;
+  pointer-events:none;
+}
+.pay-card-name{
+  text-align:center;
+  font-size:.85rem;
+  color:#B9B9B9 !important;
+  margin-bottom:14px;
+}
+.pay-order-id{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  background:#0B0B0B;
+  border:1px dashed #3A3A3A;
+  padding:10px 12px;
+  margin-bottom:12px;
+  font-size:.85rem;
+  color:#8A8A8A !important;
+}
+.pay-order-id b{
+  color:#F0F0F0 !important;
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+  letter-spacing:.08em;
+  font-size:.95rem;
+  direction:ltr;
+}
+.tg-send{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+  background:#F0F0F0 !important;
+  color:#0A0A0A !important;
+  border:1px solid #F0F0F0 !important;
+  font-weight:800;
+  padding:13px 16px;
+  min-height:44px;
+}
+.tg-send:hover{ background:#D6D6D6 !important; border-color:#D6D6D6 !important; }
+.tg-send svg{ width:18px; height:18px; flex:none; }
+.pay-hint{
+  font-size:.78rem;
+  color:#8A8A8A !important;
+  text-align:center;
+  margin-top:10px;
+  line-height:1.7;
+}
 .cart-drawer, .cart-panel{ background:#0F0F0F !important; }
 .cart-total{
   background:#1A1A1A !important;
@@ -2086,6 +2162,36 @@ function handleCartAction(action, id){
    threaded explicitly into the success view — not parked on group objects. */
 const modal = $('#modal');
 const modalBody = $('#modal-body');
+
+/* ============================================================
+   CARD-TO-CARD PAYMENT CONFIG  ← ویرایش فقط این سه مقدار
+   ============================================================ */
+const PAY_CARD_NUMBER = '0000 0000 0000 0000';            // شماره کارت واقعی
+const PAY_CARD_NAME   = 'نام و نام خانوادگی صاحب کارت';   // نام صاحب کارت
+const ADMIN_TELEGRAM  = 'cpshop_admin';                   // یوزرنیم ادمین بدون @
+
+/* شماره کارت به شکل تصویر رندر می‌شود تا قابل انتخاب/کپی نباشد */
+function payCardSVG(num){
+  const digits = String(num).replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="680" height="230" viewBox="0 0 680 230">'
+    + '<rect width="680" height="230" fill="#0B0B0B"/>'
+    + '<rect x="1" y="1" width="678" height="228" fill="none" stroke="#3A3A3A" stroke-width="2"/>'
+    + '<text x="34" y="54" fill="#8A8A8A" font-family="Tahoma,Arial,sans-serif" font-size="19">شماره کارت برای واریز</text>'
+    + '<text x="34" y="126" fill="#F0F0F0" font-family="Consolas,monospace" font-size="40" letter-spacing="3">' + digits + '</text>'
+    + '<text x="34" y="188" fill="#B9B9B9" font-family="Tahoma,Arial,sans-serif" font-size="21">' + PAY_CARD_NAME + '</text>'
+    + '</svg>';
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+/* یک شماره سفارش ثابت برای این نشست */
+function orderRef(){
+  let ref = sessionStorage.getItem('cps_order_ref');
+  if (!ref){
+    ref = 'CPS-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+    sessionStorage.setItem('cps_order_ref', ref);
+  }
+  return ref;
+}
 let lastFocused = null;
 let checkoutGroups = [];
 
@@ -2210,8 +2316,8 @@ function renderCheckoutForm(){
         <label>روش پرداخت</label>
         <div class="pay-methods">
           <div class="pay-method">
-            <input type="radio" id="pay-zarin" name="pay" value="zarinpal" checked>
-            <label for="pay-zarin">درگاه زرین‌پال</label>
+            <input type="radio" id="pay-card" name="pay" value="card" checked>
+            <label for="pay-card">کارت به کارت</label>
           </div>
           <div class="pay-method">
             <input type="radio" id="pay-shaparak" name="pay" value="shaparak">
@@ -2219,9 +2325,20 @@ function renderCheckoutForm(){
           </div>
         </div>
       </div>
+      <div class="pay-block">
+        <div class="pay-block-head">پرداخت کارت به کارت <span>مبلغ را دقیقاً واریز کنید</span></div>
+        <img class="pay-card-img" id="pay-card-img" alt="شماره کارت برای واریز" width="340" height="120">
+        <div class="pay-card-name" id="pay-card-name"></div>
+        <div class="pay-order-id"><span>شماره سفارش شما</span><b id="pay-order-ref">—</b></div>
+        <a class="tg-send" id="tg-send" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7.2 12.7 2.7 11.3c-1-.3-1-1 .2-1.4l17.7-6.8c.8-.3 1.5.2 1.3 1.2z"/></svg>
+          ارسال رسید در تلگرام ادمین
+        </a>
+        <div class="pay-hint">بعد از واریز، روی دکمه بالا بزن و رسید را در تلگرام بفرست.<br>شماره سفارش را هم در پیام نگه دار تا تأیید سریع‌تر انجام شود.</div>
+      </div>
       <div class="pay-note">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>این یک نسخه نمایشی است — هیچ پرداخت واقعی انجام نمی‌شود. آیدی را با دقت وارد کنید؛ شارژ روی آیدی اشتباه قابل بازگشت نیست.</span>
+        <span>مبلغ را دقیقاً به شماره کارت بالا واریز کن، سپس رسید را در تلگرام ادمین بفرست. آیدی را با دقت وارد کن؛ شارژ روی آیدی اشتباه قابل بازگشت نیست.</span>
       </div>
       <div class="cart-total"><span>مبلغ قابل پرداخت</span><b>${fmtToman(cartTotal())} تومان</b></div>
       <button class="btn btn-accent btn-block" type="submit" id="pay-btn">پرداخت ${fmtToman(cartTotal())} تومان</button>
@@ -2230,6 +2347,20 @@ function renderCheckoutForm(){
   `;
 
   $('#back-to-cart').addEventListener('click', renderCartView);
+
+  /* card-to-card block: image of the card number + order ref + telegram link */
+  const cardImg = $('#pay-card-img');
+  if (cardImg) cardImg.src = payCardSVG(PAY_CARD_NUMBER);
+  const cardNameEl = $('#pay-card-name');
+  if (cardNameEl) cardNameEl.textContent = 'به نام ' + PAY_CARD_NAME;
+  const ref = orderRef();
+  const refEl = $('#pay-order-ref');
+  if (refEl) refEl.textContent = ref;
+  const tgLink = $('#tg-send');
+  if (tgLink){
+    const tgMsg = 'سلام، رسید واریز\nشماره سفارش: ' + ref + '\nمبلغ: ' + fmtToman(cartTotal()) + ' تومان';
+    tgLink.href = 'https://t.me/' + ADMIN_TELEGRAM + '?text=' + encodeURIComponent(tgMsg);
+  }
 
   /* Inline validation on blur/input (UX guideline: validate-as-you-go, not submit-only). */
   const emailInput = $('#cemail');
@@ -2266,12 +2397,46 @@ function renderCheckoutForm(){
     if (!valid) return;
 
     const pay = modalBody.querySelector('input[name="pay"]:checked').value;
+
+    if (pay === 'card') {
+      renderCardReceipt(playerIds);
+      return;
+    }
+
     const payBtn = $('#pay-btn');
     payBtn.disabled = true;
     payBtn.textContent = 'در حال انتقال به درگاه پرداخت…';
-    const payName = pay === 'zarinpal' ? 'زرین‌پال' : 'شتاب';
+    const payName = 'شتاب';
     setTimeout(() => renderPayGateway(payName, playerIds), 1200);
   });
+}
+
+/* Card-to-card: show the order ref + amount, then send the customer to the
+   admin's Telegram with the receipt. The admin confirms and the order is
+   charged manually — this replaces the fake gateway for card payments. */
+function renderCardReceipt(playerIds){
+  const total = cartTotal();
+  const ref = orderRef();
+  const msg = `سلام، رسید واریز\nشماره سفارش: ${ref}\nمبلغ: ${fmtToman(total)} تومان\nآیدی بازیکن: ${Object.entries(playerIds).map(([g,v]) => g + ': ' + v).join(' | ')}`;
+  const tgHref = 'https://t.me/' + ADMIN_TELEGRAM + '?text=' + encodeURIComponent(msg);
+
+  modalBody.innerHTML = `
+    <div class="order-steps" aria-hidden="true"><div class="ostep done"></div><div class="ostep done"></div><div class="ostep done"></div></div>
+    <div class="success-view">
+      <div class="pay-block-head" style="justify-content:center;margin-bottom:16px">منتظر تأیید واریز</div>
+      <div class="pay-order-id"><span>شماره سفارش</span><b>${ref}</b></div>
+      <div class="pay-order-id"><span>مبلغ واریزی</span><b>${fmtToman(total)} <span style="font-family:inherit">تومان</span></b></div>
+      <a class="tg-send" href="${tgHref}" target="_blank" rel="noopener" style="margin-bottom:12px">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7.2 12.7 2.7 11.3c-1-.3-1-1 .2-1.4l17.7-6.8c.8-.3 1.5.2 1.3 1.2z"/></svg>
+        ارسال رسید در تلگرام ادمین
+      </a>
+      <div class="pay-hint">رسید واریز را با همین شماره سفارش برای ادمین بفرست.<br>بعد از تأیید، سفارش شما در همان تلگرام اطلاع داده می‌شود.</div>
+      <button class="btn btn-ghost btn-block" type="button" id="close-receipt" style="margin-top:16px">بستن</button>
+    </div>
+  `;
+
+  const closeBtn = $('#close-receipt');
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
 }
 
 function renderPayGateway(payName, playerIds){
