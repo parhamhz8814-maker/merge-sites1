@@ -1,0 +1,5 @@
+# local DB backups / PII must never be published
+merged-backend/db_backup_orders.json
+merged-backend/*.db
+merged-backend/*.sqlite3
+*.db-journal
