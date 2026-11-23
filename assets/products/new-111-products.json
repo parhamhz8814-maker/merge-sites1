@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Call of Duty Mobile CP",
+    "poster": "/assets/posters/codm.jpg",
+    "price_toman_final": 824062,
+    "category": "mobile-games"
+  },
+  {
+    "name": "PUBG Mobile UC 60",
+    "poster": "/assets/posters/pubg.jpg",
+    "price_toman_final": 108775,
+    "category": "mobile-games"
+  },
+  {
+    "name": "Genshin Genesis Crystals",
+    "poster": "/assets/posters/genshin.jpg",
+    "price_toman_final": 420000,
+    "category": "mobile-games"
+  },
+  {
+    "name": "Apple ID US +1",
+    "poster": "/assets/posters/apple-id.jpg",
+    "price_toman_final": 2196400,
+    "category": "apple-ids"
+  },
+  {
+    "name": "PlayStation Gift Card",
+    "poster": "/assets/posters/psn.jpg",
+    "price_toman_final": 1098750,
+    "category": "gift-cards"
+  },
+  {
+    "name": "Discord Nitro 1 Month",
+    "poster": "/assets/posters/discord-nitro.jpg",
+    "price_toman_final": 1097650,
+    "category": "subscriptions"
+  }
+]
