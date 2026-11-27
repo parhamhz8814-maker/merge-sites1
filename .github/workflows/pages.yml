@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Remove non-site folders from artifact
         run: |
-          rm -rf cp.shop cpshop merged-backend merged-frontend merged-site tools .github
+          rm -rf cp.shop cpshop merged-backend merged-frontend merged-site tools
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
