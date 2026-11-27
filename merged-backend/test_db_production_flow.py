@@ -26,12 +26,16 @@ def main() -> None:
     with sqlite3.connect(store_db.DB_PATH) as conn:
         conn.row_factory = sqlite3.Row
         products_count = conn.execute("SELECT COUNT(*) AS c FROM products").fetchone()["c"]
+        row = conn.execute(
+            "SELECT id FROM products WHERE category='codm' AND is_active=1 LIMIT 1"
+        ).fetchone()
+    pid = row["id"]
 
     print("seeded_products:", products_count)
 
     order = store_db.create_order(
         items=[
-            {"product_id": "codm-80", "quantity": 2, "player_id": "12345678"},
+            {"product_id": pid, "quantity": 2, "player_id": "12345678"},
         ],
         customer_name="Ali",
         customer_contact="+98912-345-6789",
@@ -41,13 +45,20 @@ def main() -> None:
     paid = store_db.pay_order(order["tracking"], order["pay_token"])
     print("paid_order:", paid)
 
-    got = store_db.get_order(order["tracking"])
+    got = store_db.get_order(order["tracking"], order["pay_token"])
     print("get_order_full_record:\n", got)
 
     assert got is not None
     assert got["status"] == "paid"
     assert got["customer_name"] == "Ali"
     assert got["items"][0]["player_id"] == "12345678"
+
+    # privacy: an anonymous read must not reveal the contact
+    anon = store_db.get_order(order["tracking"])
+    print("get_order_anonymous:\n", anon)
+    assert anon["customer_name"] is None
+    assert anon["customer_contact"] != "+98912-345-6789"
+    print("privacy check: OK")
 
 
 if __name__ == "__main__":

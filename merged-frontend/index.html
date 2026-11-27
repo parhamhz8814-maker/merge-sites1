@@ -276,6 +276,65 @@
     object-fit:cover;object-position:center top;
     display:block;z-index:1;
   }
+  /* ================= Motion-graphics drawer theme =================
+     The preview is a still, but the panel moves like an animated intro:
+     drifting gradient, slow Ken-Burns on the poster, a light sweep,
+     and staggered card entrances. No <video>, no media files. */
+  @keyframes mg-drift{
+    0%{background-position:0% 50%, 100% 50%}
+    50%{background-position:100% 50%, 0% 50%}
+    100%{background-position:0% 50%, 100% 50%}
+  }
+  @keyframes mg-kenburns{
+    0%{transform:scale(1) translateY(0)}
+    100%{transform:scale(1.09) translateY(-1.5%)}
+  }
+  @keyframes mg-sheen{
+    0%{transform:translateX(-130%)}
+    55%{transform:translateX(130%)}
+    100%{transform:translateX(130%)}
+  }
+  @keyframes mg-glow{
+    0%,100%{box-shadow:0 18px 48px rgba(0,0,0,.65), 0 0 0 rgba(59,130,246,0)}
+    50%{box-shadow:0 18px 54px rgba(0,0,0,.7), 0 0 42px rgba(59,130,246,.5)}
+  }
+  @keyframes mg-rise{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:none}
+  }
+  @keyframes mg-title{
+    0%,100%{text-shadow:0 0 0 rgba(59,130,246,0)}
+    50%{text-shadow:0 0 14px rgba(120,170,255,.75), 0 0 34px rgba(59,130,246,.45)}
+  }
+
+  .game-video-rail{
+    background:
+      radial-gradient(65% 50% at 28% 18%, rgba(59,130,246,.38), transparent 72%),
+      radial-gradient(55% 42% at 82% 82%, rgba(255,255,255,.10), transparent 72%),
+      #07070B;
+    background-size:180% 180%, 170% 170%, auto;
+    animation:mg-drift 20s ease-in-out infinite;
+  }
+  .game-video-wrap{animation:mg-glow 6s ease-in-out infinite}
+  .game-video-poster{animation:mg-kenburns 16s ease-in-out infinite alternate}
+  .game-video-wrap::after{
+    content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:linear-gradient(105deg, transparent 38%, rgba(140,190,255,.30) 50%, transparent 62%);
+    animation:mg-sheen 4.5s ease-in-out infinite;
+  }
+  .game-panel h3{animation:mg-title 4.5s ease-in-out infinite}
+  .game-price{animation:mg-rise .45s ease both}
+  .game-price:nth-child(2){animation-delay:.04s}
+  .game-price:nth-child(3){animation-delay:.08s}
+  .game-price:nth-child(4){animation-delay:.12s}
+  .game-price:nth-child(5){animation-delay:.16s}
+  .game-price:nth-child(6){animation-delay:.20s}
+  .game-price:nth-child(7){animation-delay:.24s}
+  .game-price:nth-child(8){animation-delay:.28s}
+  @media (prefers-reduced-motion:reduce){
+    .game-video-rail,.game-video-wrap,.game-video-poster,.game-video-wrap::after,
+    .game-panel h3,.game-price{animation:none !important}
+  }
   .game-video-wrap.has-poster .game-video-placeholder{display:none}
   @media (max-width:820px){
     .game-drawer-body{flex-direction:column}

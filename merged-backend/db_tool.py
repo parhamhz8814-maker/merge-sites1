@@ -54,11 +54,11 @@ def cmd_reset() -> None:
     print("reset_ok")
 
 
-def cmd_export() -> None:
-    out_path = HERE / "db_backup_orders.json"
-    # store_db provides the actual export implementation.
-    store_db.export_orders_json(out_path)
-    print("export_ok:", str(out_path))
+def cmd_export(redact: bool = False) -> None:
+    name = "db_backup_orders_redacted.json" if redact else "db_backup_orders.json"
+    out_path = HERE / name
+    n = store_db.export_orders_json(out_path, redact=redact)
+    print(f"export_ok: {out_path} ({n} orders, redacted={redact})")
 
 
 def main() -> None:
@@ -66,7 +66,9 @@ def main() -> None:
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("stats")
     sub.add_parser("reset")
-    sub.add_parser("export")
+    exp = sub.add_parser("export")
+    exp.add_argument("--redact", action="store_true",
+                     help="mask customer contact and player ids (safe to share)")
     args = parser.parse_args()
 
     if args.cmd == "stats":
@@ -74,7 +76,7 @@ def main() -> None:
     elif args.cmd == "reset":
         cmd_reset()
     elif args.cmd == "export":
-        cmd_export()
+        cmd_export(redact=args.redact)
     else:
         raise SystemExit(2)
 
